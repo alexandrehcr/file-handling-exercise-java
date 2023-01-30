@@ -35,10 +35,14 @@ public class Main {
 
         // Creates the output folder
         File outputDirectory = new File(FILE_PARENT + "\\" + SUBDIRECTORY);
-        if (!outputDirectory.mkdir() && !outputDirectory.exists()) {
-            throw new IllegalStateException("Cannot create output directory: " + outputDirectory.getAbsolutePath());
+        if (outputDirectory.exists()) {
+            System.out.println(outputDirectory.getPath() + "\\" + outputDirectory.getName() + " already exists.");
         } else {
-            System.out.println("Created new directory: " + outputDirectory.getParent() + "\\" + outputDirectory.getName());
+            if (!outputDirectory.mkdir() && !outputDirectory.exists()) {
+                throw new IllegalStateException("Cannot create output directory: " + outputDirectory.getPath());
+            } else {
+                System.out.println("Created directory: '" + outputDirectory.getName() + "' in " + outputDirectory.getParent());
+            }
         }
 
         // Creates the output file
@@ -46,7 +50,7 @@ public class Main {
         try {
             outputFile = new File(OUTPUT_PATH);
             if (!outputFile.exists()) {
-                System.out.println("Created: " + outputFile.getName());
+                System.out.println("Created file: " + outputFile.getName() + " in " + outputFile.getParent());
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
                     for (Product product : products) {
                         bw.write(product.toString() + "\n");
@@ -54,7 +58,8 @@ public class Main {
                 }
             } else {
                 System.out.println(outputFile.getName() + " already exists.");
-                System.out.print("What would you like to do: (o)verwrite, (a)ppend, (q)uit? ");
+                System.out.println();
+                System.out.print("What would you like to do to " + outputFile.getName() + ": (a)ppend, (o)verwrite, (q)uit? ");
                 String option = scanner.next();
                 scanner.nextLine(); // Consumes input buffer
                 switch (option) {
@@ -88,17 +93,20 @@ public class Main {
 
         // Provides the ability to remove the file and folder if it is empty.
         System.out.println();
-        System.out.print("Would you like to delete the created files created after finish the execution (y/n)? ");
+        System.out.print("Would you like to delete the created file and directory after finish the execution? (y/n)" +
+                "\nWarning: This action cannot be undone! ");
         String option = scanner.next();
         scanner.nextLine(); // Consumes input buffer
         if (option.equals("y")) {
-            System.out.print("Press ENTER to finish the execution and delete the files created... ");
+            System.out.println();
+            System.out.print("Press ENTER to finish the execution... ");
             scanner.nextLine();
+            System.out.println();
             if (outputFile.exists() && outputFile.delete()) {
-                System.out.println("Deleted file: '" + outputFile.getName() + "'");
+                System.out.println("Removed file: " + outputFile.getName());
             }
             if (outputDirectory.exists() && outputDirectory.delete()) {
-                System.out.println("Deleted directory: '" + SUBDIRECTORY + "'");
+                System.out.println("Removed directory: '" + outputDirectory.getName() + "' from " + outputDirectory.getParent() + "\\");
             }
         }
     }
